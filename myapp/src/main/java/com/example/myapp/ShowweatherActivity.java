@@ -126,7 +126,6 @@ public class ShowweatherActivity extends AppCompatActivity implements OnClickLis
                     Log.d(LOG_TAG, "row inserted, ID = " + rowID + " City = " + CityName);
                     db.close();
                     Toast.makeText(this, "Запись добавлена", Toast.LENGTH_SHORT).show();
-                   // btnSave.setEnabled(true);
                 }
                 catch (Exception e)
                 {

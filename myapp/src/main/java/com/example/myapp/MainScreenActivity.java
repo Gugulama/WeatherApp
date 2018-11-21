@@ -1,16 +1,11 @@
 package com.example.myapp;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +23,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
@@ -37,11 +31,8 @@ import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +56,7 @@ public class MainScreenActivity extends AppCompatActivity implements OnClickList
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_screen);
-        etCity = (EditText) findViewById(R.id.etCity);
+        etCity = (EditText) findViewById(R.id.etServCity);
 
         btnFind = (Button) findViewById(R.id.btnFind);
         btnFind.setOnClickListener(this);
@@ -168,7 +159,7 @@ public class MainScreenActivity extends AppCompatActivity implements OnClickList
                     int humidityColIndex = c.getColumnIndex("humidity");
                     int timeColIndex = c.getColumnIndex("time");
                     do {
-                        item = c.getInt(idColIndex) +": "+ c.getString(cityNameColIndex)+" "+ c.getString(timeColIndex);
+                        item = c.getInt(idColIndex) +": "+ c.getString(cityNameColIndex)+" " +(c.getDouble(temperatureColIndex) - 273) +" "+ c.getString(timeColIndex);
                         list.add(item);
 
                         // получаем значения по номерам столбцов и пишем все в лог
