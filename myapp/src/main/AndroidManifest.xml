@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.myapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainScreenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DatabaseActivity"
+            android:label="@string/title_DatabaseActivity" />
+        <activity
+            android:name=".ShowweatherActivity"
+            android:label="@string/title_WeatherActivity" />
+        <activity
+            android:name=".ErrorActivity"
+            android:label="@string/title_ErrorActivity" />
+        <activity android:name=".ServiceActivity" />
+        <activity android:name=".AboutActivity"></activity>
+        <service android:name=".MyService"></service>>
+    </application>
+
+</manifest>
