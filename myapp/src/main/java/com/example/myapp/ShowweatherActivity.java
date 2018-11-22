@@ -81,7 +81,7 @@ public class ShowweatherActivity extends AppCompatActivity implements OnClickLis
         }
         else {
             try {
-                Log.d(LOG_TAG, "Try to take country fullname");
+                Log.d(LOG_TAG, "Take country fullname");
                 Country = getString(this.getResources().getIdentifier(Country, "string", this.getPackageName()));
             } catch (Exception e) {
                 Log.d(LOG_TAG, "Can't find this country fullname");

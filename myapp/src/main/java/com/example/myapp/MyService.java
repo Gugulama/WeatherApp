@@ -30,72 +30,25 @@ public class MyService extends Service {
 
     private final static String LOG_TAG = "mylog";
     DBHelper dbHelper;
-    Thread myThread;
+    MyThread mythread;
     String request;
 
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "Service - onCreate");
     }
-
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "onStartCommand");
         dbHelper = new DBHelper(this);
         request = intent.getStringExtra("City");
-        myThread = new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                while (true)
-                {
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    ContentValues cv = new ContentValues();
-                    DecimalFormat df = new DecimalFormat("#.#");
-                    df.setRoundingMode(RoundingMode.CEILING);
-                    try {
-                        Log.d(LOG_TAG, "Service - Try to make request");
-                        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-                        String url = "http://api.openweathermap.org/data/2.5/weather?q=";
-                        String APIKey = "&APPID=e400f5493d915484cc024f9f90143ae6";
-
-                        String MyUrl = url + request + APIKey;
-
-                        JsonObjectRequest JsonRequest = new JsonObjectRequest(Request.Method.GET, MyUrl, null,
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        Log.d(LOG_TAG, "Service - RESPONSE SUCCESS");
-                                        Response_Proc(response);
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.d(LOG_TAG, "Service - ERROR ON RESPONSE");
-                                    }
-                                });
-
-                        queue.add(JsonRequest);
-                        dbHelper.close();
-
-                    } catch (Exception e) {
-                        Log.d(LOG_TAG, "JSON GETTING ERROR " + e.getMessage());
-                        dbHelper.close();
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        myThread.start();
+        mythread = new MyThread();
+        mythread.start();
+        Log.d(LOG_TAG, "Service Thread started");
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void onDestroy() {
-        myThread.interrupt();
+        mythread.kill();
         super.onDestroy();
         Log.d(LOG_TAG, "Service - onDestroy");
     }
@@ -141,11 +94,11 @@ public class MyService extends Service {
                 long rowID = db.insert("MySQLTable", null, cv);
                 Log.d(LOG_TAG, "row inserted, ID = " + rowID + " City = " + CityName);
                 db.close();
-                Toast.makeText(this, "Запись добавлена", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Entry from service added", Toast.LENGTH_SHORT).show();
             }
             catch (Exception e)
             {
-                Toast.makeText(this, "Не удалось добавить запись", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Can't add entry from service", Toast.LENGTH_SHORT).show();
                 db.close();
             }
         }
@@ -167,5 +120,72 @@ public class MyService extends Service {
         else if(degree < 292.5) dir = "З";
         else if(degree < 337.5) dir = "СЗ";
         return dir;
+    }
+
+    class MyThread extends Thread
+    {
+        boolean alive = true;
+        @Override
+        public void run()
+        {
+            while (true)
+            {
+                if(alive)
+                {
+                    Log.d(LOG_TAG, "Service Thread working....");
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues cv = new ContentValues();
+                    DecimalFormat df = new DecimalFormat("#.#");
+                    df.setRoundingMode(RoundingMode.CEILING);
+                    try
+                    {
+                        Log.d(LOG_TAG, "Service - Try to make request");
+                        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                        String url = "http://api.openweathermap.org/data/2.5/weather?q=";
+                        String APIKey = "&APPID=e400f5493d915484cc024f9f90143ae6";
+
+                        String MyUrl = url + request + APIKey;
+
+                        JsonObjectRequest JsonRequest = new JsonObjectRequest(Request.Method.GET, MyUrl, null,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.d(LOG_TAG, "Service - RESPONSE SUCCESS");
+                                        Response_Proc(response);
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.d(LOG_TAG, "Service - ERROR ON RESPONSE");
+                                    }
+                                });
+
+                        queue.add(JsonRequest);
+                        dbHelper.close();
+
+                    } catch (Exception e) {
+                        Log.d(LOG_TAG, "JSON GETTING ERROR " + e.getMessage());
+                        dbHelper.close();
+                    }
+                    try {
+                        TimeUnit.SECONDS.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Log.d(LOG_TAG, "Service Thread killed");
+                    return;
+                }
+            }
+        }
+
+        public void kill()
+        {
+            alive = false;
+        }
+
     }
 }

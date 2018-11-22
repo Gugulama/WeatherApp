@@ -143,7 +143,6 @@ public class MainScreenActivity extends AppCompatActivity implements OnClickList
                 }
                 break;
             case R.id.btnCheckDB:
-                Log.d(LOG_TAG, "s");
                 Cursor c = db.query("MySQLTable", null, null, null, null, null, null);
                 String item;
                 ArrayList<String> list = new ArrayList<String>();
@@ -176,7 +175,7 @@ public class MainScreenActivity extends AppCompatActivity implements OnClickList
                     } while (c.moveToNext());
 
                     try{
-                        Log.d(LOG_TAG, "try to start DB_Activity");
+                        Log.d(LOG_TAG, "Start DB_Activity");
                         Intent intent = new Intent(this, DatabaseActivity.class);
                         intent.putStringArrayListExtra("MyList", list);
                         startActivity(intent);
