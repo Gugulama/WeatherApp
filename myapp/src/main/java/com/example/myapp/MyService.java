@@ -1,10 +1,14 @@
 package com.example.myapp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,6 +36,7 @@ public class MyService extends Service {
     DBHelper dbHelper;
     MyThread mythread;
     String request;
+    int notification_id = 0;
 
     public void onCreate() {
         super.onCreate();
@@ -50,6 +55,10 @@ public class MyService extends Service {
     public void onDestroy() {
         mythread.kill();
         super.onDestroy();
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        notification_id = 0;
         Log.d(LOG_TAG, "Service - onDestroy");
     }
 
@@ -72,7 +81,6 @@ public class MyService extends Service {
             Double windSpeed = wind.getDouble("speed");
             String windDirection = defineDir(degree);
             String Wind = windSpeed.toString() + " м/с, " + windDirection;
-            String Temperature;
             Double temp = main.getDouble("temp");
             String Pressure = df.format(main.getDouble("pressure")/1.333);
             String Humidity = main.getString("humidity");
@@ -93,6 +101,20 @@ public class MyService extends Service {
             try {
                 long rowID = db.insert("MySQLTable", null, cv);
                 Log.d(LOG_TAG, "row inserted, ID = " + rowID + " City = " + CityName);
+
+                NotificationCompat.Builder builder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentTitle(notification_id + ": Weather in " + CityName)
+                                .setContentText("Tempterature: " + df.format(temp) + " K");
+
+                Notification notification = builder.build();
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(notification_id, notification);
+                notification_id++;
+
                 db.close();
                 Toast.makeText(this, "Entry from service added", Toast.LENGTH_SHORT).show();
             }
