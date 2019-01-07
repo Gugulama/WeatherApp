@@ -3,6 +3,7 @@
     <string name="title_ErrorActivity">Ошибка</string>
     <string name="title_WeatherActivity">Прогноз</string>
     <string name="title_DatabaseActivity">Сохр. прогнозы</string>
+    <string name= "my_item">Назад</string>>
     <string name="start">Start service</string>
     <string name="stop">Stop service</string>
     <string name="AC">ASCENSION ISLAND</string>

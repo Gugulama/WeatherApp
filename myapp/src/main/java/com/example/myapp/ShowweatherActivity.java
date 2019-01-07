@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,6 +22,8 @@ import java.text.DecimalFormat;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
 import com.example.myapp.MainScreenActivity;
 
 public class ShowweatherActivity extends AppCompatActivity implements OnClickListener
@@ -61,6 +66,7 @@ public class ShowweatherActivity extends AppCompatActivity implements OnClickLis
 
         dbHelper = new DBHelper(this);
 
+
         Intent intent = getIntent();
         //получение и подготовка данных
         myRequest = intent.getStringExtra("MyRequest");
@@ -94,6 +100,19 @@ public class ShowweatherActivity extends AppCompatActivity implements OnClickLis
         tvWind.setText(Wind);
         tvPressure.setText(Pressure + " мм рт.ст.");
         tvHumidity.setText(Humidity + " %");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
